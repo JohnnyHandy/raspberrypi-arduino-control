@@ -1,0 +1,16 @@
+
+ <script src="/socket.io/socket.io.js"></script>
+        <script>
+        
+        function showParagraph(data){
+                return document.getElementById('p').innerHTML=data
+        }
+                var socket = io();
+                socket.on('data', function(data){
+                        showParagraph(data)
+                })
+        </script>
+<h1>BlinkLed</h1>
+
+<p id='p'></p>
+<a href='/'>Back</a>
