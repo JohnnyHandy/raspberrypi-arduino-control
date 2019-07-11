@@ -30,17 +30,55 @@ for (var i = 0; i < 5; i++) {
         }
 }
 
+function checkLed(data){
+    rpio.open(12, rpio.OUTPUT, rpio.LOW);
+    console.log('rpio open')
+    if(data){
+        console.log('ON')
+        rpio.write(12, rpio.HIGH);
+    }else{
+        console.log('OFF')
+        rpio.write(12, rpio.LOW);
+    }
+}
 
+function status(socket){
+    rpio.open(15, rpio.INPUT, rpio.PULL_UP);
+    setInterval(function(){
+        var status = rpio.read(15)
+        console.log(status)
+        socket.emit('status',status)
+    },1000)
 
+}
 app.set('view engine', 'ejs');
 
 app.get("/", function(req,res){
     res.render('home')
 })
 
+app.get("/event", function(req,res){
+    res.render("eventTest")
+    // buttonPress()
+})
+
+app.get('/status',function(req,res){
+    res.render('status')
+})
+
 io.on('connection', function(socket){
-    console.log('a user connected');
-    blinkLed(socket)
+    socket.on('data',function(){
+        console.log('a user connected');
+        blinkLed(socket)
+    })
+
+    socket.on("check",function(data){
+        console.log('Check data:'+data);
+        checkLed(data);
+    })
+    socket.on("status",function(){
+        status(socket)
+    })
 });
 
 app.post("/", async function(req,res){

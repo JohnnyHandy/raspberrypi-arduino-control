@@ -1,0 +1,23 @@
+ <script src="/socket.io/socket.io.js"></script>
+<script>
+function load(){
+    socket.emit('status',function(){  
+    })
+}              
+
+function showParagraph(data){
+    return document.getElementById("green").innerHTML=data
+}
+
+var socket = io()
+window.addEventListener("load",load);
+socket.on('status',function(data){
+    showParagraph(data)
+    console.log(data)
+})
+</script>
+
+
+<h1>Status Test</h1>
+<p id="green"></p>
+<p id='red'></p>

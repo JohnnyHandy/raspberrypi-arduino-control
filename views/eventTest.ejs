@@ -1,0 +1,17 @@
+ <script src="/socket.io/socket.io.js"></script>
+<script>
+function load(){
+            var lightbox = document.getElementById("check"); 
+            lightbox.addEventListener("change", function(){ //add event listener for when checkbox changes
+                console.log('check changes')
+                socket.emit("check", Number(this.checked)); //send button status to server (as 1 or 0)
+            }) 
+}
+    var socket = io()
+    window.addEventListener("load",load);
+</script>
+
+
+<h1>Event Test</h1>
+<label for="check"> Check Led </label>
+<input id="check" type='checkbox'/>
