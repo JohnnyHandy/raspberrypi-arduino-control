@@ -1,0 +1,22 @@
+ <script src="/socket.io/socket.io.js"></script>
+<script>
+    function showParagraph(data){
+            return document.getElementById('p').innerHTML=data
+    }
+
+    function load(){
+        console.log('loaded')
+            // socket.on('data',function(data){
+            //         console.log(data)
+            //         showParagraph(data)
+            // })
+        socket.emit('blink')
+
+    }
+    window.addEventListener("load",load);
+    var socket = io();
+</script>
+<h1>Johnny - Five Blink Led</h1>
+
+<p id='p'></p>
+<a href='/'>Back</a>

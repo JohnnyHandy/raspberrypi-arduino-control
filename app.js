@@ -4,8 +4,33 @@ var app = require('express')()
 
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var five = require("johnny-five");
+var board = new five.Board();
 
 
+function johnnyBlink(){
+    // The board's pins will not be accessible until
+    // the board has reported that it is ready
+    board.on("ready", function() {
+        console.log("Ready!");
+        this.pinMode(13, five.Pin.OUTPUT);
+        this.digitalWrite(13, 1);
+        this.on("exit", function() {
+            this.digitalWrite(13,0)
+        });
+    });
+}
+
+function johnnyStatus(){
+    console.log("Ready!");
+    board.on("ready", function() {
+        // Assuming a button is attached to pin 9
+        this.pinMode(9, five.Pin.INPUT);
+        this.digitalRead(9, function(value) {
+            console.log(value);
+        });
+    });
+}
 async function blinkLed(socket){
 
     function delay(t) {
@@ -49,7 +74,6 @@ function status(socket){
         console.log(status)
         socket.emit('status',status)
     },1000)
-
 }
 app.set('view engine', 'ejs');
 
@@ -59,13 +83,19 @@ app.get("/", function(req,res){
 
 app.get("/event", function(req,res){
     res.render("eventTest")
-    // buttonPress()
 })
 
 app.get('/status',function(req,res){
     res.render('status')
 })
 
+app.get('/johnnyblink',function(req,res){
+    res.render('johnnyBlink')
+})
+
+app.get('/johnnystatus',function(res,res){
+    res.render('johnnyStatus')
+})
 io.on('connection', function(socket){
     socket.on('data',function(){
         console.log('a user connected');
@@ -78,6 +108,20 @@ io.on('connection', function(socket){
     })
     socket.on("status",function(){
         status(socket)
+    })
+    socket.on('blink',function(){
+        console.log('johnnyblink loaded');
+        board.on("connect",function(){
+            console.log('board connected')
+        })
+        johnnyBlink()
+    })
+    socket.on('jStatus',function(){
+        console.log('Johnny Status loaded');
+        board.on("connect",function(){
+            console.log('board connected')
+        })
+        johnnyStatus()
     })
 });
 
